@@ -1,6 +1,6 @@
 def fcfs(process_list):
     t = 0
-    completed = {}  
+    completed = {}
     gantt = []      
     a_wt = []       
     a_tt = []       
