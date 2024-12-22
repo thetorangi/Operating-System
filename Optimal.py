@@ -27,7 +27,7 @@ def opt(pages, size):
     print("Misses are:", miss)
     print("Hits are:", hit)
 
-pages = [7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1]
-size = 3
+size = int (input("Enter no of frames  : "))
+pages = list(map(int,input("Enter pages : ").split()))
 
 opt(pages, size)
