@@ -7,7 +7,7 @@ def scan(seek, head, direction):
     right = [x for x in seek if x > head]
 
     if direction.lower()[0] == 'l':
-        sequence = left[::-1] + right  [:-1:-1]
+        sequence = left[::-1] + right 
     elif direction.lower()[0] == 'r':
         sequence = right + left[::-1]  
     else:
