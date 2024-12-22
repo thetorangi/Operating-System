@@ -28,7 +28,7 @@ def scan(seek,head,direct):
             total += abs (head - arr1[i])
             print(arr1[i],end=" -> ")
             head=arr1[i]
-        for i in range (len(arr2)-1,0,-1):
+        for i in range (len(arr2)):
             total += abs(head-arr2[i])
             print(arr2[i],end=" -> ")
             head=arr2[i]
