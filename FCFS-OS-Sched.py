@@ -1,42 +1,30 @@
-def fcfs(process_list):
-    t = 0
-    completed = {}
-    gantt = []      
-    a_wt = []       
-    a_tt = []       
-    
-    while process_list:
-        if process_list[0][0] > t:
-            gantt.append("Idle")
-            t += 1
-            continue
+def fcfs(process,n):
+    wt =[]
+    tt = []
+    ct = []
+    completed=0
+    for i in range(n):
+        print(process[i][2] ,end="\t|")
+        completed+=process[i][1]
+        ct.append(completed)
+        tt.append(completed-process[i][0])
+        wt.append(tt[i]-process[i][1])
+
+    print()
+    for i in range(n):
+        print("\t",ct[i],end="")
         
-        process = process_list.pop(0)
-        gantt.append(process[2])  
-        
-        t += process[1]          
-        pid = process[2]         
-        ct = t                   
-        tt = ct - process[0]     
-        wt = tt - process[1]     
-        
-        a_wt.append(wt)
-        a_tt.append(tt)
-        completed[pid] = [ct, tt, wt]
+    print("\n\nprocess\t| arrivaltime\t| burst Time\t| completeTime\t| turaround\t| waitingtime\t| ")
+    for i in range(n):
+        print(process[i][2],"\t\t",process[i][0],"\t\t",process[i][1],"\t\t",ct[i],"\t\t",tt[i],"\t\t",wt[i])
+    print("\nAverage waiting time is : " ,sum(wt)/n)
+    print("\nAverage complete time is :",sum(ct)/n)
+n = int (input("Enter size :"))
+process=[]
+for i in range(n):
+    av = int(input("\nEnter arrival time : "))
+    bt = int(input("\nEnter burst time : "))
+    name = input("Process name : ")
+    process.append([av,bt,name])
 
-    print("Gantt Chart:")
-    print(" | ".join(str(p) for p in gantt))
-
-    print("\nProcess ID | Completion Time | Turnaround Time | Waiting Time")
-    for pid in completed:
-        ct, tt, wt = completed[pid]
-        print(f"   {pid}\t\t{ct}\t\t{tt}\t\t{wt}")
-    
-    print("\nAverage Turnaround Time:", sum(a_tt) / len(a_tt))
-    print("Average Waiting Time:", sum(a_wt) / len(a_wt))
-
-
-process_list = [[0, 20, 'P1'], [1, 4, 'P2'], [3, 3, 'P3']]
-print("Input Process List:", process_list)
-print("\nSolution:\n")
-fcfs(process_list)
+fcfs(process,n)
