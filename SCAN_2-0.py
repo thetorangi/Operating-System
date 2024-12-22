@@ -1,11 +1,10 @@
 def scan(seek, head, direction):
     seek += [0, 199]
     seek.sort()
+    total = 0
     
     left = [x for x in seek if x <= head]
     right = [x for x in seek if x > head]
-
-    total = 0
 
     if direction.lower()[0] == 'l':
         sequence = left[::-1] + right  

@@ -17,3 +17,4 @@ for i in range (size):
     seek[i]=int(input(f"Enter {i} Seek "))
 head = int (input("Enter Head : "))
 fcfs(seek,size,head)
+fcfs([176, 79, 34, 60, 92, 11, 41, 114],8,50)
