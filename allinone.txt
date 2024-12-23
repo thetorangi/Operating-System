@@ -1,0 +1,525 @@
+def fcfs(process,n):
+    wt =[]
+    tt = []
+    ct = []
+    completed=0
+    for i in range(n):
+        print(process[i][2] ,end="\t|")
+        completed+=process[i][1]
+        ct.append(completed)
+        tt.append(completed-process[i][0])
+        wt.append(tt[i]-process[i][1])
+
+    print()
+    for i in range(n):
+        print("\t",ct[i],end="")
+        
+    print("\n\nprocess\t| arrivaltime\t| burst Time\t| completeTime\t| turaround\t| waitingtime\t| ")
+    for i in range(n):
+        print(process[i][2],"\t\t",process[i][0],"\t\t",process[i][1],"\t\t",ct[i],"\t\t",tt[i],"\t\t",wt[i])
+    print("\nAverage waiting time is : " ,sum(wt)/n)
+    print("\nAverage complete time is :",sum(ct)/n)
+n = int (input("Enter size :"))
+process=[]
+for i in range(n):
+    av = int(input("\nEnter arrival time : "))
+    bt = int(input("\nEnter burst time : "))
+    name = input("Process name : ")
+    process.append([av,bt,name])
+
+fcfs(process,n)
+
+
+def srtf(process_list):
+    n = len(process_list)
+    time = 0               
+    completed = 0          
+    gantt = []             
+    wt = [0] * n           
+    tat = [0] * n          
+    remaining_bt = [p[1] for p in process_list]  
+    
+    while completed != n:
+        idx = -1
+        min_bt = float('inf')
+        for i in range(n):
+            if process_list[i][0] <= time and remaining_bt[i] > 0:  
+                if remaining_bt[i] < min_bt:
+                    min_bt = remaining_bt[i]
+                    idx = i
+        
+        if idx == -1:  
+            gantt.append("Idle")
+            time += 1
+            continue
+
+        gantt.append(process_list[idx][2])  
+        remaining_bt[idx] -= 1
+        time += 1
+        
+        if remaining_bt[idx] == 0:
+            completed += 1
+            ct = time
+            tat[idx] = ct - process_list[idx][0]  
+            wt[idx] = tat[idx] - process_list[idx][1]  
+    
+    print("\nGantt Chart:")
+    print(" | ".join(str(p) for p in gantt))
+    
+    print("\nProcess ID | Arrival Time | Burst Time | Turnaround Time | Waiting Time")
+    for i in range(n):
+        print(f"   {process_list[i][2]}\t\t{process_list[i][0]}\t\t{process_list[i][1]}\t\t{tat[i]}\t\t{wt[i]}")
+    
+    print(f"\nAverage Turnaround Time: {sum(tat) / n:.2f}")
+    print(f"Average Waiting Time: {sum(wt) / n:.2f}")
+
+process_list = [[0, 6, 'P1'], [2, 8, 'P2'], [4, 7, 'P3'], [6, 3, 'P4']]
+print("Input Process List:", process_list)
+print("\nSolution:\n")
+srtf(process_list)
+
+
+#proiritynon process
+def priority_scheduling(n, arrival_time, burst_time, priority):
+    CPU = 0
+    gantt_chart = []
+    waiting_time = [0] * n
+    turnaround_time = [0] * n
+
+    processes = [(arrival_time[i], burst_time[i], priority[i], i + 1) for i in range(n)]
+    processes.sort(key=lambda x: (x[0], x[2]))
+
+    completed = [False] * n
+    remaining = n
+
+    while remaining > 0:
+        available = []
+        for i in range(n):
+            if not completed[i] and processes[i][0] <= CPU:
+                available.append(processes[i])
+
+        if not available:
+            gantt_chart.append("Idle")
+            CPU += 1
+            continue
+
+        available.sort(key=lambda x: x[2])
+        process = available[0]
+        idx = processes.index(process)
+
+        gantt_chart.append(f"P{process[3]}")
+
+        waiting_time[idx] = CPU - process[0]
+        CPU += process[1]
+        turnaround_time[idx] = waiting_time[idx] + process[1]
+
+        completed[idx] = True
+        remaining -= 1
+
+    print("\nGantt Chart:")
+    print(" -> ".join(gantt_chart))
+
+    print("\nProcess_Number\tBurst_Time\tPriority\tArrival_Time\tWaiting_Time\tTurnaround_Time\n")
+    for i in range(n):
+        print(f"P{i+1}\t\t{burst_time[i]}\t\t{priority[i]}\t\t{arrival_time[i]}\t\t{waiting_time[i]}\t\t{turnaround_time[i]}")
+
+    avg_wt = sum(waiting_time) / n
+    avg_tat = sum(turnaround_time) / n
+
+    print(f"\nAverage Waiting Time = {avg_wt:.2f}")
+    print(f"Average Turnaround Time = {avg_tat:.2f}")
+
+n = int(input("Enter number of processes: "))
+arrival_time = []
+burst_time = []
+priority = []
+
+for i in range(n):
+    at, bt, pr = map(int, input(f"Enter Arrival Time, Burst Time, and Priority for P{i+1}: ").split())
+    arrival_time.append(at)
+    burst_time.append(bt)
+    priority.append(pr)
+
+priority_scheduling(n, arrival_time, burst_time, priority)
+
+#prioeity prempt
+import copy
+
+def priority_p() :
+    p_info = []
+    process_order = []
+    
+    print('NOTE: 0 IS TAKEN AS THE LOWEST PRIORITY.')
+    n = int(input('ENTER THE NUMBER OF PROCESSES: '))
+    print('ENTER THE PROCESS ID, ARRIVAL TIME, BURST TIME AND PRIORITY RESPECTIVELY: ')
+    for _ in range(n) :
+       temp_list = list(map(int, input().split()))
+       temp_list.append(0)
+       p_info.append(temp_list)
+
+    original_p_info = copy.deepcopy(p_info)
+
+    p_info.sort(key = lambda k : k[1])
+    original_p_info.sort(key = lambda p: p[1])
+    cur_time = 0     
+    tot_time_req = 0
+    for i in range(n) :
+        tot_time_req += p_info[i][2]
+
+    counter = 0
+    j = 0 
+
+    while(counter < tot_time_req) :
+        max_pt = -1
+        p_no = None
+        for j in range(n) :
+            if p_info[j][2] != 0 :
+                if p_info[j][1] <= cur_time :
+                    if p_info[j][3] > max_pt :
+                        max_pt = p_info[j][3]
+                        p_no = p_info[j][0] 
+        if p_no is None :
+            process_order.append(-1)
+            cur_time += 1
+        else:
+            process_order.append(p_no)
+            cur_time += 1
+            counter += 1
+            for k in range(n) :
+                if p_no == p_info[k][0] :
+                    p_info[k][2] -= 1
+                    p_info[k][4] = cur_time
+    
+    gantt_chart = []
+    i = 0
+    ct = 0
+    while i < len(process_order):
+        x = 1
+        for j in range(i + 1, len(process_order)):
+            if process_order[i] == process_order[j]:
+                x += 1
+                if j == len(process_order) - 1:
+                    ct += x
+                    break
+            else:
+                ct += x
+                break
+        gantt_chart.append([process_order[i], ct])
+        i += x
+
+    print('\nGANTT CHART: ')
+    for p in range(len(gantt_chart)):
+        if gantt_chart[p][0] == -1:
+            print('IDLE\t|', end='')
+        else:
+            print('P{}\t|'.format(gantt_chart[p][0]), end='')
+    print()
+    print('0', '\t', end='')
+    for p in range(len(gantt_chart)):
+        print(gantt_chart[p][1], '\t', end='')
+
+    p_info.sort(key=lambda k: k[0])
+    original_p_info.sort(key=lambda p: p[0])
+
+    print("\n\nTABLE:\n")
+
+    print('PROCESS NO.\tARRIVAL TIME\tBURST TIME\tPRIORITY\tCOMPLETION TIME\t\tTURN AROUND TIME\tWAITING TIME\t')
+    for i in range(n) :
+        print(original_p_info[i][0], '\t\t', original_p_info[i][1], '\t\t', original_p_info[i][2],
+              '\t\t', p_info[i][3], '\t\t', p_info[i][4], '\t\t\t', p_info[i][4] - p_info[i][1], '\t\t\t\t', p_info[i][4] - p_info[i][1] - original_p_info[i][2])
+
+    tot_tat = 0               
+    tot_wt = 0
+   
+    for i in range(n) :
+        tot_tat += p_info[i][4] - p_info[i][1]
+        tot_wt += p_info[i][4] - p_info[i][1] - original_p_info[i][2]
+
+    avg_tat = tot_tat / n
+    avg_wt = tot_wt / n 
+    
+    print('\nAVERAGE TURN AROUND TIME: ', avg_tat)
+    print('AVERAGE WAITING TIME: ', avg_wt)
+
+priority_p()
+
+
+#Roundrobint
+def round_robin(process_list, quantum):  
+    n = len(process_list)
+    queue = []           
+    gantt = []           
+    wt = [0] * n         
+    tat = [0] * n        
+    remaining_bt = [p[1] for p in process_list]  
+    time = 0             
+    completed = 0        
+    
+    process_list.sort(key=lambda x: x[0])  
+    queue.append(0)  
+    
+    visited = [False] * n
+    visited[0] = True
+    
+    while completed < n:      
+        idx = queue.pop(0)
+        if remaining_bt[idx] > 0:
+            gantt.append(process_list[idx][2])              
+            
+            if remaining_bt[idx] > quantum:
+                time += quantum
+                remaining_bt[idx] -= quantum
+            else:
+                time += remaining_bt[idx]
+                remaining_bt[idx] = 0
+                completed += 1
+                
+                tat[idx] = time - process_list[idx][0] 
+                wt[idx] = tat[idx] - process_list[idx][1]  
+        
+        for i in range(n):
+            if (process_list[i][0] <= time and not visited[i] and remaining_bt[i] > 0):
+                queue.append(i)
+                visited[i] = True
+        
+        if remaining_bt[idx] > 0:
+            queue.append(idx)
+               
+        if len(queue) == 0:
+            gantt.append("Idle")
+            time += 1
+    
+    print("\nGantt Chart:")
+    print(" | ".join(str(p) for p in gantt))
+    
+    print("\nProcess ID | Arrival Time | Burst Time | Turnaround Time | Waiting Time")
+    for i in range(n):
+        print(f"   {process_list[i][2]}\t\t{process_list[i][0]}\t\t{process_list[i][1]}\t\t{tat[i]}\t\t{wt[i]}")
+    
+    print(f"\nAverage Turnaround Time: {sum(tat) / n:.2f}")
+    print(f"Average Waiting Time: {sum(wt) / n:.2f}")
+
+n = int(input("Enter number of processes: "))
+process_list = []
+for i in range(n):
+    at, bt = map(int, input(f"Enter Arrival Time and Burst Time for P{i+1}: ").split())
+    process_list.append([at, bt, f'P{i+1}'])
+
+quantum = int(input("Enter Time Quantum: "))
+
+print("\nSolution:\n")
+round_robin(process_list, quantum)
+
+
+#Diskk
+
+#fcfs
+def fcfs(seek,size,head):
+    for s in seek:
+        print (s,end=" -> ")
+
+    total= 0 
+    dist=  0
+
+    for s in seek:
+        dist = abs(s-head)
+        total+=dist
+        head = s
+    print(f"total seek is {total}")
+
+size = int(input("Enter no of Seeks : "))
+seek = [0]*size
+for i in range (size):
+    seek[i]=int(input(f"Enter {i} Seek "))
+head = int (input("Enter Head : "))
+fcfs(seek,size,head)
+
+
+
+#sstf
+
+def sstf(seek,head):
+    print("Requests:", seek)
+    total = 0
+    print("Order of access : ")
+    print(head,end=" -> ")
+    
+    while seek:
+        closest = min(seek, key=lambda x: abs(x - head))
+        print(closest, end=" -> ") 
+        total += abs(head - closest)  
+        head = closest 
+        seek.remove(closest) 
+        
+    print("\nTotal Seek Time:", total)
+
+size = int(input("Enter number of requests: "))
+seek = list(map(int, input("Enter the requests separated by space: ").split()))
+head = int(input("Enter the initial head position: "))
+
+sstf(seek,head)
+
+#scan
+
+def scan(seek, head, direction):
+    seek += [0, 199]
+    seek.sort()
+    total = 0
+    
+    left = [x for x in seek if x <= head]
+    right = [x for x in seek if x > head]
+
+    if direction.lower()[0] == 'l':
+        sequence = left[::-1] + right[:-1:] 
+    elif direction.lower()[0] == 'r':
+        sequence = right + left[:1:-1]  
+    else:
+        print("Invalid Direction")
+        return
+
+    print(head, end=" -> ")
+    for req in sequence:
+        total += abs(head - req)
+        head = req
+        print(req, end=" -> ")
+
+    print("\nTotal seek is:", total)
+
+
+seek = list(map(int, input("Enter requests: ").split()))
+head = int(input("Enter initial head position: "))
+direction = input("Enter direction (L/R): ")
+
+scan(seek, head, direction)
+
+
+#CScan
+
+def scan(seek, head, direction):
+    seek += [0, 199]
+    seek.sort()
+    total = 0
+    
+    left = [x for x in seek if x <= head]
+    right = [x for x in seek if x > head]
+
+    if direction.lower()[0] == 'l':
+        sequence = left[::-1] + right[::-1]  
+    elif direction.lower()[0] == 'r':
+        sequence = right + left
+    else:
+        print("Invalid Direction")
+        return
+
+    print(head, end=" -> ")
+    for req in sequence:
+        total += abs(head - req)
+        head = req
+        print(req, end=" -> ")
+
+    print("\nTotal seek is:", total)
+
+seek = list(map(int, input("Enter requests: ").split()))
+head = int(input("Enter initial head position: "))
+direction = input("Enter direction (L/R): ")
+
+scan(seek, head, direction)
+
+#fifo
+
+def fifo(size,pages):
+    frame = [None]*size
+    hit = 0 
+    miss = 0
+    head=0
+    for page in pages:
+        print (page,end=": \t")
+        if page in frame:
+            hit +=1
+            print(frame,end="\t hit \n")
+        else:
+            miss +=1
+            frame[head]=page
+            head = int((head+1)%size)
+            print(frame,end="\t miss \n")
+        
+    print("\n\nhits are : ",hit)
+    print("\n\nmiss are : ",miss)
+
+size = int(input("Enter number of frames : "))
+pages = list(map(int,input("Enter pages : ").split()))
+
+fifo(size,pages)
+
+#lru
+
+def opt(pages, size):
+    frames = []  
+    hit = 0      
+    miss = 0     
+
+    for i in range(len(pages)): 
+        print(pages[i],end="  ")
+        if pages[i] in frames:
+            hit += 1
+        else:
+            miss += 1  
+            if len(frames) < size:
+                frames.append(pages[i])  
+            else:
+                idx = float('inf')
+                far =float('inf')
+                for j in range(len(frames)):
+                    try:
+                        nxt=pages[:i-1:-1].index(frames[j])-i-1
+                    except ValueError:
+                        nxt = float('inf')
+                        idx=j
+                        break
+                    if nxt < far:
+                        far=nxt
+                        idx=j
+                frames[idx]=pages[i]
+        print(frames)
+    print("Misses are:", miss)
+    print("Hits are:", hit)
+
+size = int (input("Enter no of frames  : "))
+pages = list(map(int,input("Enter pages : ").split()))
+opt(pages, size)
+
+#optimal
+
+def opt(pages, size):
+    frames = []  
+    hit = 0      
+    miss = 0     
+
+    for i in range(len(pages)): 
+        if pages[i] in frames:
+            hit += 1
+        else:
+            miss += 1  
+            if len(frames) < size:
+                frames.append(pages[i])  
+            else:
+                idx = -1
+                far =-1
+                for j in range(len(frames)):
+                    try:
+                        nxt=pages[i+1:].index(frames[j])+i+1
+                    except ValueError:
+                        nxt = float('inf')
+                        idx=j
+                        break
+                    if nxt > far:
+                        far=nxt
+                        idx=j
+                frames[idx]=pages[i]
+    print("Misses are:", miss)
+    print("Hits are:", hit)
+
+size = int (input("Enter no of frames  : "))
+pages = list(map(int,input("Enter pages : ").split()))
+
+opt(pages, size)
