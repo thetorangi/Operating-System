@@ -23,8 +23,8 @@ def scan(seek, head, direction):
     print("\nTotal seek is:", total)
 
 
-# seek = list(map(int, input("Enter requests: ").split()))
-# head = int(input("Enter initial head position: "))
-# direction = input("Enter direction (L/R): ")
+seek = list(map(int, input("Enter requests: ").split()))
+head = int(input("Enter initial head position: "))
+direction = input("Enter direction (L/R): ")
 
 scan(seek, head, direction)
