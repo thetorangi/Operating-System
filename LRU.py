@@ -10,7 +10,6 @@ def lru(pages,size):
             ptr = ((frames.index(page)+1)%size)
             print(frames,end=" ")
             print("hit")
-            
         else:
             miss+=1
             if None in frames :
